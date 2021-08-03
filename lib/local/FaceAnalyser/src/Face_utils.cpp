@@ -32,11 +32,20 @@
 //
 ///////////////////////////////////////////////////////////////////////////////
 
-#include <stdafx_fa.h>
-
 #include <Face_utils.h>
 
 #include <RotationHelpers.h>
+
+// OpenCV includes
+#include <opencv2/core/core.hpp>
+#include <opencv2/imgproc.hpp>
+#include <opencv2/calib3d.hpp>
+
+// For FHOG visualisation
+#include <dlib/opencv.h>
+#include <dlib/image_processing/frontal_face_detector.h>
+
+using namespace std;
 
 namespace FaceAnalysis
 {
@@ -211,7 +220,7 @@ namespace FaceAnalysis
 		LandmarkDetector::PAW paw(destination_landmarks, triangulation, 0, 0, aligned_face.cols-1, aligned_face.rows-1);
 		
 		// Mask each of the channels (a bit of a roundabout way, but OpenCV 3.1 in debug mode doesn't seem to be able to handle a more direct way using split and merge)
-		std::vector<cv::Mat> aligned_face_channels(aligned_face.channels());
+		vector<cv::Mat> aligned_face_channels(aligned_face.channels());
 		
 		for (int c = 0; c < aligned_face.channels(); ++c)
 		{

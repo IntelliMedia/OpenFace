@@ -31,14 +31,32 @@
 //       IEEE International Conference on Automatic Face and Gesture Recognition, 2015 
 //
 ///////////////////////////////////////////////////////////////////////////////
-#include <stdafx_fa.h>
 
 #include "FaceAnalyser.h"
+
+// OpenCV includes
+#include <opencv2/core/core.hpp>
+#include <opencv2/imgproc.hpp>
+
+// System includes
+#include <stdio.h>
+#include <iostream>
+#include <iomanip>
+
+#include <string>
+
+// Boost includes
+#include <filesystem.hpp>
+#include <filesystem/fstream.hpp>
+#include <boost/algorithm/string.hpp>
+#include <boost/algorithm/string/split.hpp>
 
 // Local includes
 #include "Face_utils.h"
 
 using namespace FaceAnalysis;
+
+using namespace std;
 
 // Constructor from a model file (or a default one if not provided
 FaceAnalyser::FaceAnalyser(const FaceAnalysis::FaceAnalyserParameters& face_analyser_params)
@@ -149,19 +167,19 @@ std::vector<bool> FaceAnalyser::GetDynamicAUClass() const
 	return au_dynamic_class;
 }
 
-std::vector<std::pair<std::string, bool>> FaceAnalyser::GetDynamicAUReg() const
+std::vector<std::pair<string, bool>> FaceAnalyser::GetDynamicAUReg() const
 {
-	std::vector<std::pair<std::string, bool>> au_dynamic_reg;
+	std::vector<std::pair<string, bool>> au_dynamic_reg;
 	std::vector<std::string> au_reg_names_stat = AU_SVR_static_appearance_lin_regressors.GetAUNames();
 	std::vector<std::string> au_reg_names_dyn = AU_SVR_dynamic_appearance_lin_regressors.GetAUNames();
 
 	for (size_t i = 0; i < au_reg_names_stat.size(); ++i)
 	{
-		au_dynamic_reg.push_back(std::pair<std::string, bool>(au_reg_names_stat[i], false));
+		au_dynamic_reg.push_back(std::pair<string, bool>(au_reg_names_stat[i], false));
 	}
 	for (size_t i = 0; i < au_reg_names_dyn.size(); ++i)
 	{
-		au_dynamic_reg.push_back(std::pair<std::string, bool>(au_reg_names_dyn[i], true));
+		au_dynamic_reg.push_back(std::pair<string, bool>(au_reg_names_dyn[i], true));
 	}
 
 	return au_dynamic_reg;
@@ -209,7 +227,7 @@ void FaceAnalyser::GetLatestNeutralHOG(cv::Mat_<double>& hog_descriptor, int& nu
 }
 
 // Getting the closest view center based on orientation
-int GetViewId(const std::vector<cv::Vec3d> orientations_all, const cv::Vec3d& orientation)
+int GetViewId(const vector<cv::Vec3d> orientations_all, const cv::Vec3d& orientation)
 {
 	int id = 0;
 
@@ -304,6 +322,7 @@ void FaceAnalyser::PredictStaticAUsAndComputeFeatures(const cv::Mat& frame, cons
 	AU_predictions_class = AU_predictions_occurence;
 
 }
+
 
 void FaceAnalyser::AddNextFrame(const cv::Mat& frame, const cv::Mat_<float>& detected_landmarks, bool success, double timestamp_seconds, bool online)
 {
@@ -546,8 +565,7 @@ void FaceAnalyser::PostprocessPredictions()
 	}
 }
 
-void FaceAnalyser::ExtractAllPredictionsOfflineReg(std::vector<std::pair<std::string, std::vector<double>>>& au_predictions, 
-	std::vector<double>& confidences, std::vector<bool>& successes, std::vector<double>& timestamps, bool dynamic)
+void FaceAnalyser::ExtractAllPredictionsOfflineReg(vector<std::pair<std::string, vector<double>>>& au_predictions, vector<double>& confidences, vector<bool>& successes, vector<double>& timestamps, bool dynamic)
 {
 	if(dynamic)
 	{
@@ -557,20 +575,20 @@ void FaceAnalyser::ExtractAllPredictionsOfflineReg(std::vector<std::pair<std::st
 	timestamps = this->timestamps;
 	au_predictions.clear();
 	// First extract the valid AU values and put them in a different format
-	std::vector<std::vector<double>> aus_valid;
-	std::vector<double> offsets;
+	vector<vector<double>> aus_valid;
+	vector<double> offsets;
 	successes = this->valid_preds;
 	
-	std::vector<std::string> dyn_au_names = AU_SVR_dynamic_appearance_lin_regressors.GetAUNames();
+	vector<string> dyn_au_names = AU_SVR_dynamic_appearance_lin_regressors.GetAUNames();
 
 	// Allow these AUs to be person calirated based on expected number of neutral frames (learned from the data)
 	for(auto au_iter = AU_predictions_reg_all_hist.begin(); au_iter != AU_predictions_reg_all_hist.end(); ++au_iter)
 	{
-		std::vector<double> au_good;
-		std::string au_name = au_iter->first;
-		std::vector<double> au_vals = au_iter->second;
+		vector<double> au_good;
+		string au_name = au_iter->first;
+		vector<double> au_vals = au_iter->second;
 		
-		au_predictions.push_back(std::pair<std::string, std::vector<double>>(au_name, au_vals));
+		au_predictions.push_back(std::pair<string,vector<double>>(au_name, au_vals));
 
 		for(size_t frame = 0; frame < au_vals.size(); ++frame)
 		{
@@ -646,11 +664,11 @@ void FaceAnalyser::ExtractAllPredictionsOfflineReg(std::vector<std::pair<std::st
 	// Perform some prediction smoothing
 	for (auto au_iter = au_predictions.begin(); au_iter != au_predictions.end(); ++au_iter)
 	{
-		std::string au_name = au_iter->first;
+		string au_name = au_iter->first;
 
 		// Perform a moving average of 3 frames
 		int window_size = 3;
-		std::vector<double> au_vals_tmp = au_iter->second;
+		vector<double> au_vals_tmp = au_iter->second;
 		for (size_t i = (window_size - 1) / 2; i < au_iter->second.size() - (window_size - 1) / 2; ++i)
 		{
 			double sum = 0;
@@ -667,8 +685,7 @@ void FaceAnalyser::ExtractAllPredictionsOfflineReg(std::vector<std::pair<std::st
 
 }
 
-void FaceAnalyser::ExtractAllPredictionsOfflineClass(std::vector<std::pair<std::string, std::vector<double>>>& au_predictions, 
-	std::vector<double>& confidences, std::vector<bool>& successes, std::vector<double>& timestamps, bool dynamic)
+void FaceAnalyser::ExtractAllPredictionsOfflineClass(vector<std::pair<std::string, vector<double>>>& au_predictions, vector<double>& confidences, vector<bool>& successes, vector<double>& timestamps, bool dynamic)
 {
 	if (dynamic)
 	{
@@ -680,12 +697,12 @@ void FaceAnalyser::ExtractAllPredictionsOfflineClass(std::vector<std::pair<std::
 
 	for(auto au_iter = AU_predictions_class_all_hist.begin(); au_iter != AU_predictions_class_all_hist.end(); ++au_iter)
 	{
-		std::string au_name = au_iter->first;
-		std::vector<double> au_vals = au_iter->second;
+		string au_name = au_iter->first;
+		vector<double> au_vals = au_iter->second;
 		
 		// Perform a moving average of 7 frames on classifications
 		int window_size = 7;
-		std::vector<double> au_vals_tmp = au_vals;
+		vector<double> au_vals_tmp = au_vals;
 		if((int)au_vals.size() > (window_size - 1) / 2)
 		{
 			for (size_t i = (window_size - 1)/2; i < au_vals.size() - (window_size - 1) / 2; ++i)
@@ -706,7 +723,7 @@ void FaceAnalyser::ExtractAllPredictionsOfflineClass(std::vector<std::pair<std::
 				au_vals[i] = sum;
 			}
 		}
-		au_predictions.push_back(std::pair<std::string, std::vector<double>>(au_name, au_vals));
+		au_predictions.push_back(std::pair<string,vector<double>>(au_name, au_vals));
 
 	}
 
@@ -744,7 +761,7 @@ void FaceAnalyser::Reset()
 
 	geom_desc_track = cv::Mat_<double>(geom_desc_track.rows, geom_desc_track.cols, 0.0);
 
-	dyn_scaling = std::vector<std::vector<double>>(dyn_scaling.size(), std::vector<double>(dyn_scaling[0].size(), 5.0));
+	dyn_scaling = vector<vector<double>>(dyn_scaling.size(), vector<double>(dyn_scaling[0].size(), 5.0));	
 
 	AU_predictions_reg.clear();
 	AU_predictions_class.clear();
@@ -860,31 +877,31 @@ void FaceAnalyser::ExtractMedian(cv::Mat_<int>& histogram, int hist_count, cv::M
 	}
 }
 // Apply the current predictors to the currently stored descriptors
-std::vector<std::pair<std::string, double>> FaceAnalyser::PredictCurrentAUs(int view)
+vector<pair<string, double>> FaceAnalyser::PredictCurrentAUs(int view)
 {
 
-	std::vector<std::pair<std::string, double>> predictions;
+	vector<pair<string, double>> predictions;
 
 	if(!hog_desc_frame.empty())
 	{
-		std::vector<std::string> svr_lin_stat_aus;
-		std::vector<double> svr_lin_stat_preds;
+		vector<string> svr_lin_stat_aus;
+		vector<double> svr_lin_stat_preds;
 
 		AU_SVR_static_appearance_lin_regressors.Predict(svr_lin_stat_preds, svr_lin_stat_aus, hog_desc_frame, geom_descriptor_frame);
 
 		for(size_t i = 0; i < svr_lin_stat_preds.size(); ++i)
 		{
-			predictions.push_back(std::pair<std::string, double>(svr_lin_stat_aus[i], svr_lin_stat_preds[i]));
+			predictions.push_back(pair<string, double>(svr_lin_stat_aus[i], svr_lin_stat_preds[i]));
 		}
 
-		std::vector<std::string> svr_lin_dyn_aus;
-		std::vector<double> svr_lin_dyn_preds;
+		vector<string> svr_lin_dyn_aus;
+		vector<double> svr_lin_dyn_preds;
 
 		AU_SVR_dynamic_appearance_lin_regressors.Predict(svr_lin_dyn_preds, svr_lin_dyn_aus, hog_desc_frame, geom_descriptor_frame,  this->hog_desc_median, this->geom_descriptor_median);
 
 		for(size_t i = 0; i < svr_lin_dyn_preds.size(); ++i)
 		{
-			predictions.push_back(std::pair<std::string, double>(svr_lin_dyn_aus[i], svr_lin_dyn_preds[i]));
+			predictions.push_back(pair<string, double>(svr_lin_dyn_aus[i], svr_lin_dyn_preds[i]));
 		}
 
 	}
@@ -892,13 +909,12 @@ std::vector<std::pair<std::string, double>> FaceAnalyser::PredictCurrentAUs(int 
 	return predictions;
 }
 
-std::vector<std::pair<std::string, double>> FaceAnalyser::CorrectOnlineAUs(std::vector<std::pair<std::string, double>> predictions_orig, 
-	int view, bool dyn_shift, bool dyn_scale, bool update_track, bool clip_values)
+vector<pair<string, double>> FaceAnalyser::CorrectOnlineAUs(std::vector<std::pair<std::string, double>> predictions_orig, int view, bool dyn_shift, bool dyn_scale, bool update_track, bool clip_values)
 {
 	// Correction that drags the predicion to 0 (assuming the bottom 10% of predictions are of neutral expresssions)
-	std::vector<double> correction(predictions_orig.size(), 0.0);
+	vector<double> correction(predictions_orig.size(), 0.0);
 
-	std::vector<std::pair<std::string, double>> predictions = predictions_orig;
+	vector<pair<string, double>> predictions = predictions_orig;
 
 	if(update_track)
 	{
@@ -918,7 +934,7 @@ std::vector<std::pair<std::string, double>> FaceAnalyser::CorrectOnlineAUs(std::
 		// Also makes sense as till the maximum expression is seen, it is hard to tell how expressive a persons face is
 		if(dyn_scaling[view].empty())
 		{
-			dyn_scaling[view] = std::vector<double>(predictions.size(), 5.0);
+			dyn_scaling[view] = vector<double>(predictions.size(), 5.0);
 		}
 		
 		for(size_t i = 0; i < predictions.size(); ++i)
@@ -956,31 +972,31 @@ std::vector<std::pair<std::string, double>> FaceAnalyser::CorrectOnlineAUs(std::
 }
 
 // Apply the current predictors to the currently stored descriptors (classification)
-std::vector<std::pair<std::string, double>> FaceAnalyser::PredictCurrentAUsClass(int view)
+vector<pair<string, double>> FaceAnalyser::PredictCurrentAUsClass(int view)
 {
 
-	std::vector<std::pair<std::string, double>> predictions;
+	vector<pair<string, double>> predictions;
 
 	if(!hog_desc_frame.empty())
 	{
-		std::vector<std::string> svm_lin_stat_aus;
-		std::vector<double> svm_lin_stat_preds;
+		vector<string> svm_lin_stat_aus;
+		vector<double> svm_lin_stat_preds;
 		
 		AU_SVM_static_appearance_lin.Predict(svm_lin_stat_preds, svm_lin_stat_aus, hog_desc_frame, geom_descriptor_frame);
 
 		for(size_t i = 0; i < svm_lin_stat_aus.size(); ++i)
 		{
-			predictions.push_back(std::pair<std::string, double>(svm_lin_stat_aus[i], svm_lin_stat_preds[i]));
+			predictions.push_back(pair<string, double>(svm_lin_stat_aus[i], svm_lin_stat_preds[i]));
 		}
 
-		std::vector<std::string> svm_lin_dyn_aus;
-		std::vector<double> svm_lin_dyn_preds;
+		vector<string> svm_lin_dyn_aus;
+		vector<double> svm_lin_dyn_preds;
 
 		AU_SVM_dynamic_appearance_lin.Predict(svm_lin_dyn_preds, svm_lin_dyn_aus, hog_desc_frame, geom_descriptor_frame, this->hog_desc_median, this->geom_descriptor_median);
 
 		for(size_t i = 0; i < svm_lin_dyn_aus.size(); ++i)
 		{
-			predictions.push_back(std::pair<std::string, double>(svm_lin_dyn_aus[i], svm_lin_dyn_preds[i]));
+			predictions.push_back(pair<string, double>(svm_lin_dyn_aus[i], svm_lin_dyn_preds[i]));
 		}
 		
 	}
@@ -988,17 +1004,17 @@ std::vector<std::pair<std::string, double>> FaceAnalyser::PredictCurrentAUsClass
 	return predictions;
 }
 
-std::vector<std::pair<std::string, double>> FaceAnalyser::GetCurrentAUsClass() const
+vector<pair<string, double>> FaceAnalyser::GetCurrentAUsClass() const
 {
 	return AU_predictions_class;
 }
 
-std::vector<std::pair<std::string, double>> FaceAnalyser::GetCurrentAUsReg() const
+vector<pair<string, double>> FaceAnalyser::GetCurrentAUsReg() const
 {
 	return AU_predictions_reg;
 }
 
-std::vector<std::pair<std::string, double>> FaceAnalyser::GetCurrentAUsCombined() const
+vector<pair<string, double>> FaceAnalyser::GetCurrentAUsCombined() const
 {
 	return AU_predictions_combined;
 }
@@ -1007,28 +1023,28 @@ void FaceAnalyser::Read(std::string model_loc)
 {
 	// Reading in the modules for AU recognition
 
-	std::cout << "Reading the AU analysis module from: " << model_loc << std::endl;
+	cout << "Reading the AU analysis module from: " << model_loc << endl;
 
-	std::ifstream locations(model_loc.c_str(), std::ios_base::in);
+	ifstream locations(model_loc.c_str(), ios_base::in);
 	if (!locations.is_open())
 	{
-		std::cout << "Couldn't open the model file, aborting" << std::endl;
+		cout << "Couldn't open the model file, aborting" << endl;
 		return;
 	}
-	std::string line;
+	string line;
 
 	// The other module locations should be defined as relative paths from the main model
-	fs::path root = fs::path(model_loc).parent_path();
+	boost::filesystem::path root = boost::filesystem::path(model_loc).parent_path();
 
 	// The main file contains the references to other files
 	while (!locations.eof())
 	{
 		getline(locations, line);
 
-		std::stringstream lineStream(line);
+		stringstream lineStream(line);
 
-		std::string module;
-		std::string location;
+		string module;
+		string location;
 
 		// figure out which module is to be read from which file
 		lineStream >> module;
@@ -1046,44 +1062,27 @@ void FaceAnalyser::Read(std::string model_loc)
 		if (module.compare("AUPredictor") == 0)
 		{
 			// The AU predictors
-			std::cout << "Reading the AU predictors from: " << location;
+			cout << "Reading the AU predictors from: " << location;
 			ReadAU(location);
-			std::cout << "... Done" << std::endl;
+			cout << "... Done" << endl;
 		}
 		else if (module.compare("PDM") == 0)
 		{
-			std::cout << "Reading the PDM from: " << location;
+			cout << "Reading the PDM from: " << location;
 			pdm = LandmarkDetector::PDM();
 			pdm.Read(location);
-			std::cout << "... Done" << std::endl;
+			cout << "... Done" << endl;
 		}
 		else if (module.compare("Triangulation") == 0)
 		{
-			std::cout << "Reading the triangulation from:" << location;
+			cout << "Reading the triangulation from:" << location;
 			// The triangulation used for masking out the non-face parts of aligned image
 			std::ifstream triangulation_file(location);
 			ReadMat(triangulation_file, triangulation);
-			std::cout << "... Done" << std::endl;
+			cout << "... Done" << endl;
 		}
 	}
 
-}
-
-// Split the string into tokens
-static void split(const std::string& str, std::vector<std::string>& out, char delim = ' ')
-{
-	std::stringstream ss(str);
-	std::string token;
-	while (std::getline(ss, token, delim)) {
-		out.push_back(token);
-	}
-}
-
-// Trim the end of a string (in place)
-static void rtrim(std::string &s) {
-	s.erase(std::find_if(s.rbegin(), s.rend(), [](int ch) {
-		return !std::isspace(ch);
-	}).base(), s.end());
 }
 
 // Reading in AU prediction modules
@@ -1091,19 +1090,19 @@ void FaceAnalyser::ReadAU(std::string au_model_location)
 {
 
 	// Open the list of the regressors in the file
-	std::ifstream locations(au_model_location.c_str(), std::ios::in);
+	ifstream locations(au_model_location.c_str(), ios::in);
 
 	if(!locations.is_open())
 	{
-		std::cout << "Couldn't open the AU prediction files at: " << au_model_location.c_str() << " aborting" << std::endl;
-		std::cout.flush();
+		cout << "Couldn't open the AU prediction files at: " << au_model_location.c_str() << " aborting" << endl;
+		cout.flush();
 		return;
 	}
 
-	std::string line;
+	string line;
 	
 	// The other module locations should be defined as relative paths from the main model
-	fs::path root = fs::path(au_model_location).parent_path();		
+	boost::filesystem::path root = boost::filesystem::path(au_model_location).parent_path();		
 	
 	// The main file contains the references to other files
 	while (!locations.eof())
@@ -1111,10 +1110,10 @@ void FaceAnalyser::ReadAU(std::string au_model_location)
 		
 		getline(locations, line);
 
-		std::stringstream lineStream(line);
+		stringstream lineStream(line);
 
-		std::string name;
-		std::string location;
+		string name;
+		string location;
 
 		// figure out which module is to be read from which file
 		lineStream >> location;
@@ -1129,8 +1128,8 @@ void FaceAnalyser::ReadAU(std::string au_model_location)
 			// remove carriage return at the end for compatibility with unix systems
 			name.erase(name.find_last_not_of(" \n\r\t") + 1);
 		}
-		std::vector<std::string> au_names;
-		split(name, au_names, ',');
+		vector<string> au_names;
+		boost::split(au_names, name, boost::is_any_of(","));
 
 		// append the lovstion to root location (boost syntax)
 		location = (root / location).string();
@@ -1140,9 +1139,7 @@ void FaceAnalyser::ReadAU(std::string au_model_location)
   
 }
 
-void FaceAnalyser::UpdatePredictionTrack(cv::Mat_<int>& prediction_corr_histogram, int& prediction_correction_count, 
-	std::vector<double>& correction, const std::vector<std::pair<std::string, double>>& predictions, double ratio, int num_bins, 
-	double min_val, double max_val, int min_frames)
+void FaceAnalyser::UpdatePredictionTrack(cv::Mat_<int>& prediction_corr_histogram, int& prediction_correction_count, vector<double>& correction, const vector<pair<string, double>>& predictions, double ratio, int num_bins, double min_val, double max_val, int min_frames)
 {
 	double length = max_val - min_val;
 	if(length < 0)
@@ -1197,8 +1194,7 @@ void FaceAnalyser::UpdatePredictionTrack(cv::Mat_<int>& prediction_corr_histogra
 	}
 }
 
-void FaceAnalyser::GetSampleHist(cv::Mat_<int>& prediction_corr_histogram, int prediction_correction_count, std::vector<double>& sample,
-	double ratio, int num_bins, double min_val, double max_val)
+void FaceAnalyser::GetSampleHist(cv::Mat_<int>& prediction_corr_histogram, int prediction_correction_count, vector<double>& sample, double ratio, int num_bins, double min_val, double max_val)
 {
 
 	double length = max_val - min_val;
@@ -1228,9 +1224,9 @@ void FaceAnalyser::GetSampleHist(cv::Mat_<int>& prediction_corr_histogram, int p
 
 }
 
-void FaceAnalyser::ReadRegressor(std::string fname, const std::vector<std::string>& au_names)
+void FaceAnalyser::ReadRegressor(std::string fname, const vector<string>& au_names)
 {
-	std::ifstream regressor_stream(fname.c_str(), std::ios::in | std::ios::binary);
+	ifstream regressor_stream(fname.c_str(), ios::in | ios::binary);
 
 	if (regressor_stream.is_open())
 	{
@@ -1262,14 +1258,14 @@ double FaceAnalyser::GetCurrentTimeSeconds() {
 }
 
 // Allows for post processing of the AU signal
-void FaceAnalyser::PostprocessOutputFile(std::string output_file)
+void FaceAnalyser::PostprocessOutputFile(string output_file)
 {
 
-	std::vector<double> certainties;
-	std::vector<bool> successes;
-	std::vector<double> timestamps;
-	std::vector<std::pair<std::string, std::vector<double>>> predictions_reg;
-	std::vector<std::pair<std::string, std::vector<double>>> predictions_class;
+	vector<double> certainties;
+	vector<bool> successes;
+	vector<double> timestamps;
+	vector<std::pair<std::string, vector<double>>> predictions_reg;
+	vector<std::pair<std::string, vector<double>>> predictions_class;
 
 	// Construct the new values to overwrite the output file with
 	ExtractAllPredictionsOfflineReg(predictions_reg, certainties, successes, timestamps, dynamic);
@@ -1279,12 +1275,12 @@ void FaceAnalyser::PostprocessOutputFile(std::string output_file)
 	int num_reg = (int)predictions_reg.size();
 
 	// Extract the indices of writing out first
-	std::vector<std::string> au_reg_names = GetAURegNames();
+	vector<string> au_reg_names = GetAURegNames();
 	std::sort(au_reg_names.begin(), au_reg_names.end());
-	std::vector<int> inds_reg;
+	vector<int> inds_reg;
 
 	// write out ar the correct index
-	for (std::string au_name : au_reg_names)
+	for (string au_name : au_reg_names)
 	{
 		for (int i = 0; i < num_reg; ++i)
 		{
@@ -1296,12 +1292,12 @@ void FaceAnalyser::PostprocessOutputFile(std::string output_file)
 		}
 	}
 
-	std::vector<std::string> au_class_names = GetAUClassNames();
+	vector<string> au_class_names = GetAUClassNames();
 	std::sort(au_class_names.begin(), au_class_names.end());
-	std::vector<int> inds_class;
+	vector<int> inds_class;
 
 	// write out ar the correct index
-	for (std::string au_name : au_class_names)
+	for (string au_name : au_class_names)
 	{
 		for (int i = 0; i < num_class; ++i)
 		{
@@ -1313,10 +1309,10 @@ void FaceAnalyser::PostprocessOutputFile(std::string output_file)
 		}
 	}
 	// Read all of the output file in
-	std::vector<std::string> output_file_contents;
+	vector<string> output_file_contents;
 
 	std::ifstream infile(output_file);
-	std::string line;
+	string line;
 
 	while (std::getline(infile, line))
 		output_file_contents.push_back(line);
@@ -1325,13 +1321,13 @@ void FaceAnalyser::PostprocessOutputFile(std::string output_file)
 
 	// Read the header and find all _r and _c parts in a file and use their indices
 	std::vector<std::string> tokens;
-	split(output_file_contents[0], tokens, ',');
+	boost::split(tokens, output_file_contents[0], boost::is_any_of(","));
 
 	int begin_ind = -1;
 
 	for (size_t i = 0; i < tokens.size(); ++i)
 	{
-		if (tokens[i].find("AU") != std::string::npos && begin_ind == -1)
+		if (tokens[i].find("AU") != string::npos && begin_ind == -1)
 		{
 			begin_ind = (int)i;
 			break;
@@ -1340,21 +1336,21 @@ void FaceAnalyser::PostprocessOutputFile(std::string output_file)
 	int end_ind = begin_ind + num_class + num_reg;
 
 	// Now overwrite the whole file
-	std::ofstream outfile(output_file, std::ios_base::out);
+	std::ofstream outfile(output_file, ios_base::out);
 	// Write the header
 	outfile << std::setprecision(2);
 	outfile << std::fixed;
 	outfile << std::noshowpoint;
 
-	outfile << output_file_contents[0].c_str() << "\n";
+	outfile << output_file_contents[0].c_str() << endl;
 
 	// Write the contents
 	for (int i = 1; i < (int)output_file_contents.size(); ++i)
 	{
 		std::vector<std::string> tokens;
-		split(output_file_contents[i], tokens, ',');
+		boost::split(tokens, output_file_contents[i], boost::is_any_of(","));
 
-		rtrim(tokens[0]);
+		boost::trim(tokens[0]);
 		outfile << tokens[0];
 
 		for (int t = 1; t < (int)tokens.size(); ++t)
@@ -1363,20 +1359,20 @@ void FaceAnalyser::PostprocessOutputFile(std::string output_file)
 			{
 				if (t - begin_ind < num_reg)
 				{
-					outfile << "," << predictions_reg[inds_reg[t - begin_ind]].second[i - 1];
+					outfile << ", " << predictions_reg[inds_reg[t - begin_ind]].second[i - 1];
 				}
 				else
 				{
-					outfile << "," << predictions_class[inds_class[t - begin_ind - num_reg]].second[i - 1];
+					outfile << ", " << predictions_class[inds_class[t - begin_ind - num_reg]].second[i - 1];
 				}
 			}
 			else
 			{
-				rtrim(tokens[t]);
-				outfile << "," << tokens[t];
+				boost::trim(tokens[t]);
+				outfile << ", " << tokens[t];
 			}
 		}
-		outfile << "\n";
+		outfile << endl;
 	}
 
 

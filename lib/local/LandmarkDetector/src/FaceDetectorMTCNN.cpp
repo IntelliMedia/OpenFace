@@ -36,6 +36,22 @@
 
 #include "FaceDetectorMTCNN.h"
 
+// OpenCV includes
+#include <opencv2/core/core.hpp>
+#include <opencv2/imgproc.hpp>
+
+// System includes
+#include <fstream>
+
+// Math includes
+#define _USE_MATH_DEFINES
+#include <cmath>
+
+// Boost includes
+#include <filesystem.hpp>
+#include <filesystem/fstream.hpp>
+
+
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
 #endif
@@ -58,7 +74,7 @@ extern "C" {
 using namespace LandmarkDetector;
 
 // Constructor from model file location
-FaceDetectorMTCNN::FaceDetectorMTCNN(const std::string& location)
+FaceDetectorMTCNN::FaceDetectorMTCNN(const string& location)
 {
 	this->Read(location);
 }
@@ -136,12 +152,12 @@ std::vector<cv::Mat_<float>> CNN::Inference(const cv::Mat& input_img, bool direc
 	cv::split(input_img, channels);  
 
 	// Flip the BGR order to RGB
-	std::vector<cv::Mat_<float> > input_maps;
+	vector<cv::Mat_<float> > input_maps;
 	input_maps.push_back(channels[2]);
 	input_maps.push_back(channels[1]);
 	input_maps.push_back(channels[0]);
 
-	std::vector<cv::Mat_<float> > outputs;
+	vector<cv::Mat_<float> > outputs;
 
 	for (size_t layer = 0; layer < cnn_layer_types.size(); ++layer)
 	{
@@ -250,15 +266,15 @@ void CNN::ClearPrecomp()
 	}
 }
 
-void CNN::Read(const std::string& location)
+void CNN::Read(const string& location)
 {
 
 	openblas_set_num_threads(1);
 
-	std::ifstream cnn_stream(location, std::ios::in | std::ios::binary);
+	ifstream cnn_stream(location, ios::in | ios::binary);
 	if (cnn_stream.is_open())
 	{
-		cnn_stream.seekg(0, std::ios::beg);
+		cnn_stream.seekg(0, ios::beg);
 
 		// Reading in CNNs
 
@@ -286,11 +302,11 @@ void CNN::Read(const std::string& location)
 				int num_kernels;
 				cnn_stream.read((char*)&num_kernels, 4);
 
-				std::vector<std::vector<cv::Mat_<float> > > kernels;
+				vector<vector<cv::Mat_<float> > > kernels;
 
 				kernels.resize(num_in_maps);
 
-				std::vector<float> biases;
+				vector<float> biases;
 				for (int k = 0; k < num_kernels; ++k)
 				{
 					float bias;
@@ -314,7 +330,7 @@ void CNN::Read(const std::string& location)
 				}
 
 				// Rearrange the kernels for faster inference with FFT
-				std::vector<std::vector<cv::Mat_<float> > > kernels_rearr;
+				vector<vector<cv::Mat_<float> > > kernels_rearr;
 				kernels_rearr.resize(num_kernels);
 
 				// Fill up the rearranged layer
@@ -329,7 +345,7 @@ void CNN::Read(const std::string& location)
 				cnn_convolutional_layers.push_back(kernels_rearr);
 
 				// Place-holders for DFT precomputation
-				std::vector<std::map<int, std::vector<cv::Mat_<double> > > > cnn_convolutional_layers_dft_curr_layer;
+				vector<map<int, vector<cv::Mat_<double> > > > cnn_convolutional_layers_dft_curr_layer;
 				cnn_convolutional_layers_dft_curr_layer.resize(num_kernels);
 				cnn_convolutional_layers_dft.push_back(cnn_convolutional_layers_dft_curr_layer);
 
@@ -392,37 +408,37 @@ void CNN::Read(const std::string& location)
 	}
 	else
 	{
-		std::cout << "WARNING: Can't find the CNN location" << std::endl;
+		cout << "WARNING: Can't find the CNN location" << endl;
 	}
 }
 
 //===========================================================================
 // Read in the MTCNN detector
-void FaceDetectorMTCNN::Read(const std::string& location)
+void FaceDetectorMTCNN::Read(const string& location)
 {
 
-	std::cout << "Reading the MTCNN face detector from: " << location << std::endl;
+	cout << "Reading the MTCNN face detector from: " << location << endl;
 
-	std::ifstream locations(location.c_str(), std::ios_base::in);
+	ifstream locations(location.c_str(), ios_base::in);
 	if (!locations.is_open())
 	{
-		std::cout << "MTCNN model file not found or can't be opened" << std::endl;
+		cout << "MTCNN model file not found or can't be opened" << endl;
 		return;
 	}
-	std::string line;
+	string line;
 
 	// The other module locations should be defined as relative paths from the main model
-	fs::path root = fs::path(location).parent_path();
+	boost::filesystem::path root = boost::filesystem::path(location).parent_path();
 
 	// The main file contains the references to other files
 	while (!locations.eof())
 	{
 		getline(locations, line);
 
-		std::stringstream lineStream(line);
+		stringstream lineStream(line);
 
-		std::string module;
-		std::string location;
+		string module;
+		string location;
 
 		// figure out which module is to be read from which file
 		lineStream >> module;
@@ -439,17 +455,17 @@ void FaceDetectorMTCNN::Read(const std::string& location)
 		location = (root / location).string();
 		if (module.compare("PNet") == 0)
 		{
-			std::cout << "Reading the PNet module from: " << location << std::endl;
+			cout << "Reading the PNet module from: " << location << endl;
 			PNet.Read(location);
 		}
 		else if(module.compare("RNet") == 0)
 		{
-			std::cout << "Reading the RNet module from: " << location << std::endl;
+			cout << "Reading the RNet module from: " << location << endl;
 			RNet.Read(location);
 		}
 		else if (module.compare("ONet") == 0)
 		{
-			std::cout << "Reading the ONet module from: " << location << std::endl;
+			cout << "Reading the ONet module from: " << location << endl;
 			ONet.Read(location);
 		}
 	}
@@ -516,12 +532,11 @@ std::vector<int> non_maximum_supression(const std::vector<cv::Rect_<float> >& or
 }
 
 // Helper function for selecting a subset of bounding boxes based on indices
-void select_subset(const std::vector<int>& to_keep, std::vector<cv::Rect_<float> >& bounding_boxes, std::vector<float>& scores,
-	std::vector<cv::Rect_<float> >& corrections)
+void select_subset(const vector<int>& to_keep, vector<cv::Rect_<float> >& bounding_boxes, vector<float>& scores, vector<cv::Rect_<float> >& corrections)
 {
-	std::vector<cv::Rect_<float> > bounding_boxes_tmp;
-	std::vector<float> scores_tmp;
-	std::vector<cv::Rect_<float> > corrections_tmp;
+	vector<cv::Rect_<float> > bounding_boxes_tmp;
+	vector<float> scores_tmp;
+	vector<cv::Rect_<float> > corrections_tmp;
 
 	for (size_t i = 0; i < to_keep.size(); ++i)
 	{
@@ -536,9 +551,7 @@ void select_subset(const std::vector<int>& to_keep, std::vector<cv::Rect_<float>
 }
 
 // Use the heatmap generated by PNet to generate bounding boxes in the original image space, also generate the correction values and scores of the bounding boxes as well
-void generate_bounding_boxes(std::vector<cv::Rect_<float> >& o_bounding_boxes, std::vector<float>& o_scores, 
-	std::vector<cv::Rect_<float> >& o_corrections, const cv::Mat_<float>& heatmap, const std::vector<cv::Mat_<float> >& corrections,
-	float scale, float threshold, int face_support)
+void generate_bounding_boxes(vector<cv::Rect_<float> >& o_bounding_boxes, vector<float>& o_scores, vector<cv::Rect_<float> >& o_corrections, const cv::Mat_<float>& heatmap, const vector<cv::Mat_<float> >& corrections, float scale, float threshold, int face_support)
 {
 
 	// Correction for the pooling
@@ -577,7 +590,7 @@ void generate_bounding_boxes(std::vector<cv::Rect_<float> >& o_bounding_boxes, s
 }
 
 // Converting the bounding boxes to squares
-void rectify(std::vector<cv::Rect_<float> >& total_bboxes)
+void rectify(vector<cv::Rect_<float> >& total_bboxes)
 {
 
 	// Apply size and location offsets
@@ -586,7 +599,7 @@ void rectify(std::vector<cv::Rect_<float> >& total_bboxes)
 		float height = total_bboxes[i].height;
 		float width = total_bboxes[i].width;
 
-		float max_side = std::max(width, height);
+		float max_side = max(width, height);
 
 		// Correct the starts based on new size
 		float new_min_x = total_bboxes[i].x + 0.5 * (width - max_side);
@@ -599,7 +612,7 @@ void rectify(std::vector<cv::Rect_<float> >& total_bboxes)
 	}
 }
 
-void apply_correction(std::vector<cv::Rect_<float> >& total_bboxes, const std::vector<cv::Rect_<float> > corrections, bool add1)
+void apply_correction(vector<cv::Rect_<float> >& total_bboxes, const vector<cv::Rect_<float> > corrections, bool add1)
 {
 
 	// Apply size and location offsets
@@ -625,8 +638,7 @@ void apply_correction(std::vector<cv::Rect_<float> >& total_bboxes, const std::v
 
 
 // The actual MTCNN face detection step
-bool FaceDetectorMTCNN::DetectFaces(std::vector<cv::Rect_<float> >& o_regions, const cv::Mat& img_in, 
-	std::vector<float>& o_confidences, int min_face_size, float t1, float t2, float t3)
+bool FaceDetectorMTCNN::DetectFaces(vector<cv::Rect_<float> >& o_regions, const cv::Mat& img_in, std::vector<float>& o_confidences, int min_face_size, float t1, float t2, float t3)
 {
 
 	int height_orig = img_in.size().height;
@@ -657,14 +669,14 @@ bool FaceDetectorMTCNN::DetectFaces(std::vector<cv::Rect_<float> >& o_regions, c
 	cv::Mat img_float;
 	input_img.convertTo(img_float, CV_32FC3);
 
-	std::vector<cv::Rect_<float> > proposal_boxes_all;
-	std::vector<float> scores_all;
-	std::vector<cv::Rect_<float> > proposal_corrections_all;
+	vector<cv::Rect_<float> > proposal_boxes_all;
+	vector<float> scores_all;
+	vector<cv::Rect_<float> > proposal_corrections_all;
 
 	// As the scales will be done in parallel have some containers for them
-	std::vector<std::vector<cv::Rect_<float> > > proposal_boxes_cross_scale(num_scales);
-	std::vector<std::vector<float> > scores_cross_scale(num_scales);
-	std::vector<std::vector<cv::Rect_<float> > > proposal_corrections_cross_scale(num_scales);
+	vector<vector<cv::Rect_<float> > > proposal_boxes_cross_scale(num_scales);
+	vector<vector<float> > scores_cross_scale(num_scales);
+	vector<vector<cv::Rect_<float> > > proposal_corrections_cross_scale(num_scales);
 
 	for (int i = 0; i < num_scales; ++i)
 	{
@@ -694,9 +706,9 @@ bool FaceDetectorMTCNN::DetectFaces(std::vector<cv::Rect_<float> >& o_regions, c
 		std::vector<cv::Mat_<float>> corrections_heatmap(pnet_out.begin() + 2, pnet_out.end());
 
 		// Grab the detections
-		std::vector<cv::Rect_<float> > proposal_boxes;
-		std::vector<float> scores;
-		std::vector<cv::Rect_<float> > proposal_corrections;
+		vector<cv::Rect_<float> > proposal_boxes;
+		vector<float> scores;
+		vector<cv::Rect_<float> > proposal_corrections;
 		generate_bounding_boxes(proposal_boxes, scores, proposal_corrections, prob_heatmap, corrections_heatmap, scale, t1, face_support);
 
 		proposal_boxes_cross_scale[i] = proposal_boxes;
@@ -708,7 +720,7 @@ bool FaceDetectorMTCNN::DetectFaces(std::vector<cv::Rect_<float> >& o_regions, c
 	// Perform non-maximum supression on proposals accross scales and combine them
 	for (int i = 0; i < num_scales; ++i)
 	{
-		std::vector<int> to_keep = non_maximum_supression(proposal_boxes_cross_scale[i], scores_cross_scale[i], 0.5, false);
+		vector<int> to_keep = non_maximum_supression(proposal_boxes_cross_scale[i], scores_cross_scale[i], 0.5, false);
 		select_subset(to_keep, proposal_boxes_cross_scale[i], scores_cross_scale[i], proposal_corrections_cross_scale[i]);
 
 		proposal_boxes_all.insert(proposal_boxes_all.end(), proposal_boxes_cross_scale[i].begin(), proposal_boxes_cross_scale[i].end());
@@ -719,7 +731,7 @@ bool FaceDetectorMTCNN::DetectFaces(std::vector<cv::Rect_<float> >& o_regions, c
 	// Preparation for RNet step
 
 	// Non maximum supression accross bounding boxes, and their offset correction
-	std::vector<int> to_keep = non_maximum_supression(proposal_boxes_all, scores_all, 0.7, false);
+	vector<int> to_keep = non_maximum_supression(proposal_boxes_all, scores_all, 0.7, false);
 	select_subset(to_keep, proposal_boxes_all, scores_all, proposal_corrections_all);
 
 	apply_correction(proposal_boxes_all, proposal_corrections_all, false);
@@ -728,7 +740,7 @@ bool FaceDetectorMTCNN::DetectFaces(std::vector<cv::Rect_<float> >& o_regions, c
 	rectify(proposal_boxes_all);
 
 	// Creating proposal images from previous step detections
-	std::vector<bool> above_thresh;
+	vector<bool> above_thresh;
 	above_thresh.resize(proposal_boxes_all.size(), false);
 
 	for (size_t k = 0; k < proposal_boxes_all.size(); ++k) 

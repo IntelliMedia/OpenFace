@@ -485,7 +485,7 @@ void PDM::UpdateModelParameters(const cv::Mat_<float>& delta_p, cv::Mat_<float>&
 	cv::Vec3f euler = Utilities::AxisAngle2Euler(axis_angle);
 
 	// Temporary fix to numerical instability
-	if (std::isnan(euler[0]) || std::isnan(euler[1]) || std::isnan(euler[2]))
+	if (isnan(euler[0]) || isnan(euler[1]) || isnan(euler[2]))
 	{
 		euler[0] = 0;
 		euler[1] = 0;
@@ -704,10 +704,10 @@ void PDM::CalcParams(cv::Vec6f& out_params_global, cv::Mat_<float>& out_params_l
 
 }
 
-bool PDM::Read(std::string location)
+bool PDM::Read(string location)
 {
 
-	std::ifstream pdmLoc(location, std::ios_base::in);
+	ifstream pdmLoc(location, ios_base::in);
 	if (!pdmLoc.is_open())
 	{
 		return false;

@@ -43,11 +43,14 @@
 
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
+#include <opencv2/videoio/videoio.hpp>  // Video write
+#include <opencv2/videoio/videoio_c.h>  // Video write
 
 #include <stdio.h>
 #include <time.h>
 
-#include <filesystem>
+#include <filesystem.hpp>
+#include <filesystem/fstream.hpp>
 
 #define INFO_STREAM( stream ) \
 std::cout << stream << std::endl
@@ -67,6 +70,8 @@ static void printErrorAndAbort( const std::string & error )
 #define FATAL_STREAM( stream ) \
 printErrorAndAbort( std::string( "Fatal error: " ) + stream )
 
+using namespace std;
+
 // Get current date/time, format is YYYY-MM-DD.HH:mm:ss
 const std::string currentDateTime() {
     time_t     now = time(0);
@@ -80,14 +85,14 @@ const std::string currentDateTime() {
     return buf;
 }
 
-std::vector<std::string> get_arguments(int argc, char **argv)
+vector<string> get_arguments(int argc, char **argv)
 {
 
-	std::vector<std::string> arguments;
+	vector<string> arguments;
 
 	for(int i = 1; i < argc; ++i)
 	{
-		arguments.push_back(std::string(argv[i]));
+		arguments.push_back(string(argv[i]));
 	}
 	return arguments;
 }
@@ -95,10 +100,10 @@ std::vector<std::string> get_arguments(int argc, char **argv)
 int main (int argc, char **argv)
 {
 
-	std::vector<std::string> arguments = get_arguments(argc, argv);
+	vector<string> arguments = get_arguments(argc, argv);
 
 	// Some initial parameters that can be overriden from command line	
-	std::string outroot, outfile;
+	string outroot, outfile;
 
 	TCHAR NPath[200];
 	GetCurrentDirectory(200, NPath);
@@ -147,16 +152,16 @@ int main (int argc, char **argv)
 	cv::Mat img;
 	vCap >> img;
 			
-	std::filesystem::path dir(outroot);
-	std::filesystem::create_directory(dir);
+	boost::filesystem::path dir(outroot);
+	boost::filesystem::create_directory(dir);
 
-	std::string out_file = outroot + outfile;
+	string out_file = outroot + outfile;
 	// saving the videos
-	cv::VideoWriter video_writer(out_file, cv::VideoWriter::fourcc('D','I','V','X'), 30, img.size(), true);
+	cv::VideoWriter video_writer(out_file, CV_FOURCC('D','I','V','X'), 30, img.size(), true);
 
-	std::ofstream outlog;
-	outlog.open((outroot + outfile + ".log").c_str(), std::ios_base::out);
-	outlog << "frame, time(ms)" << std::endl;
+	ofstream outlog;
+	outlog.open((outroot + outfile + ".log").c_str(), ios_base::out);
+	outlog << "frame, time(ms)" << endl;
 
 	double freq = cv::getTickFrequency();
 
@@ -175,7 +180,7 @@ int main (int argc, char **argv)
 		video_writer << img;
 
 		outlog << frameProc + 1 << " " << curr_time;
-		outlog << std::endl;
+		outlog << endl;
 						
 		
 		cv::imshow("rec", img);

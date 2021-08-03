@@ -52,14 +52,16 @@
 #define CONFIG_DIR "~"
 #endif
 
-std::vector<std::string> get_arguments(int argc, char **argv)
+using namespace std;
+
+vector<string> get_arguments(int argc, char **argv)
 {
 
-	std::vector<std::string> arguments;
+	vector<string> arguments;
 
 	for (int i = 0; i < argc; ++i)
 	{
-		arguments.push_back(std::string(argv[i]));
+		arguments.push_back(string(argv[i]));
 	}
 	return arguments;
 }
@@ -68,13 +70,13 @@ int main(int argc, char **argv)
 {
 
 	//Convert arguments to more convenient vector form
-	std::vector<std::string> arguments = get_arguments(argc, argv);
+	vector<string> arguments = get_arguments(argc, argv);
 
 	// no arguments: output usage
 	if (arguments.size() == 1)
 	{
-		std::cout << "For command line arguments see:" << std::endl;
-		std::cout << " https://github.com/TadasBaltrusaitis/OpenFace/wiki/Command-line-arguments";
+		cout << "For command line arguments see:" << endl;
+		cout << " https://github.com/TadasBaltrusaitis/OpenFace/wiki/Command-line-arguments";
 		return 0;
 	}
 
@@ -84,7 +86,7 @@ int main(int argc, char **argv)
 	// The sequence reader chooses what to open based on command line arguments provided
 	if (!image_reader.Open(arguments))
 	{
-		std::cout << "Could not open any images" << std::endl;
+		cout << "Could not open any images" << endl;
 		return 1;
 	}
 
@@ -92,16 +94,16 @@ int main(int argc, char **argv)
 	LandmarkDetector::FaceModelParameters det_parameters(arguments);
 
 	// The modules that are being used for tracking
-	std::cout << "Loading the model" << std::endl;
+	cout << "Loading the model" << endl;
 	LandmarkDetector::CLNF face_model(det_parameters.model_location);
 
 	if (!face_model.loaded_successfully)
 	{
-		std::cout << "ERROR: Could not load the landmark detector" << std::endl;
+		cout << "ERROR: Could not load the landmark detector" << endl;
 		return 1;
 	}
 
-	std::cout << "Model loaded" << std::endl;
+	cout << "Model loaded" << endl;
 
 	// Load facial feature extractor and AU analyser (make sure it is static)
 	FaceAnalysis::FaceAnalyserParameters face_analysis_params(arguments);
@@ -116,7 +118,7 @@ int main(int argc, char **argv)
 	// If can't find MTCNN face detector, default to HOG one
 	if (det_parameters.curr_face_detector == LandmarkDetector::FaceModelParameters::MTCNN_DETECTOR && face_detector_mtcnn.empty())
 	{
-		std::cout << "INFO: defaulting to HOG-SVM face detector" << std::endl;
+		cout << "INFO: defaulting to HOG-SVM face detector" << endl;
 		det_parameters.curr_face_detector = LandmarkDetector::FaceModelParameters::HOG_SVM_DETECTOR;
 	}
 
@@ -129,15 +131,15 @@ int main(int argc, char **argv)
 	
 	if (!face_model.eye_model)
 	{
-		std::cout << "WARNING: no eye model found" << std::endl;
+		cout << "WARNING: no eye model found" << endl;
 	}
 
 	if (face_analyser.GetAUClassNames().size() == 0 && face_analyser.GetAUClassNames().size() == 0)
 	{
-		std::cout << "WARNING: no Action Unit models found" << std::endl;
+		cout << "WARNING: no Action Unit models found" << endl;
 	}
 
-	std::cout << "Starting tracking" << std::endl;
+	cout << "Starting tracking" << endl;
 	while (!rgb_image.empty())
 	{
 	
@@ -156,7 +158,7 @@ int main(int argc, char **argv)
 		cv::Mat_<uchar> grayscale_image = image_reader.GetGrayFrame();
 
 		// Detect faces in an image
-		std::vector<cv::Rect_<float> > face_detections;
+		vector<cv::Rect_<float> > face_detections;
 
 		if (image_reader.has_bounding_boxes)
 		{
@@ -166,7 +168,7 @@ int main(int argc, char **argv)
 		{
 			if (det_parameters.curr_face_detector == LandmarkDetector::FaceModelParameters::HOG_SVM_DETECTOR)
 			{
-				std::vector<float> confidences;
+				vector<float> confidences;
 				LandmarkDetector::DetectFacesHOG(face_detections, grayscale_image, face_detector_hog, confidences);
 			}
 			else if (det_parameters.curr_face_detector == LandmarkDetector::FaceModelParameters::HAAR_DETECTOR)
@@ -175,7 +177,7 @@ int main(int argc, char **argv)
 			}
 			else
 			{
-				std::vector<float> confidences;
+				vector<float> confidences;
 				LandmarkDetector::DetectFacesMTCNN(face_detections, rgb_image, face_detector_mtcnn, confidences);
 			}
 		}

@@ -35,6 +35,8 @@
 
 #include "CNN_utils.h"
 
+using namespace std;
+
 namespace LandmarkDetector
 {
 
@@ -160,7 +162,7 @@ namespace LandmarkDetector
 
 	void max_pooling(std::vector<cv::Mat_<float> >& outputs, const std::vector<cv::Mat_<float> >& input_maps, int stride_x, int stride_y, int kernel_size_x, int kernel_size_y)
 	{
-		std::vector<cv::Mat_<float> > outputs_sub;
+		vector<cv::Mat_<float> > outputs_sub;
 
 		// Iterate over kernel height and width, based on stride
 		for (size_t in = 0; in < input_maps.size(); ++in)
@@ -213,8 +215,7 @@ namespace LandmarkDetector
 
 	}
 
-	void convolution_single_kern_fft(const std::vector<cv::Mat_<float> >& input_imgs, std::vector<cv::Mat_<double> >& img_dfts, 
-		const std::vector<cv::Mat_<float> >&  _templs, std::map<int, std::vector<cv::Mat_<double> > >& _templ_dfts, cv::Mat_<float>& result)
+	void convolution_single_kern_fft(const vector<cv::Mat_<float> >& input_imgs, vector<cv::Mat_<double> >& img_dfts, const vector<cv::Mat_<float> >&  _templs, map<int, vector<cv::Mat_<double> > >& _templ_dfts, cv::Mat_<float>& result)
 	{
 		// Assume result is defined properly
 		if (result.empty())
@@ -241,7 +242,7 @@ namespace LandmarkDetector
 		blocksize.height = dftsize.height - _templs[0].rows + 1;
 		blocksize.height = MIN(blocksize.height, result.rows);
 
-		std::vector<cv::Mat_<double>> dftTempl;
+		vector<cv::Mat_<double>> dftTempl;
 
 		// if this has not been precomputed, precompute it, otherwise use it
 		if (_templ_dfts.find(dftsize.width) == _templ_dfts.end())
@@ -283,7 +284,7 @@ namespace LandmarkDetector
 
 		cv::Mat cdst(result, cv::Rect(0, 0, bsz.width, bsz.height));
 
-		std::vector<cv::Mat_<double> > dftImgs;
+		vector<cv::Mat_<double> > dftImgs;
 		dftImgs.resize(input_imgs.size());
 
 		if (img_dfts.empty())
@@ -335,14 +336,12 @@ namespace LandmarkDetector
 
 	}
 
-	void convolution_fft2(std::vector<cv::Mat_<float> >& outputs, const std::vector<cv::Mat_<float> >& input_maps,
-		const std::vector<std::vector<cv::Mat_<float> > >& kernels, const std::vector<float >& biases,
-		std::vector<std::map<int, std::vector<cv::Mat_<double> > > >& precomp_dfts)
+	void convolution_fft2(std::vector<cv::Mat_<float> >& outputs, const std::vector<cv::Mat_<float> >& input_maps, const std::vector<std::vector<cv::Mat_<float> > >& kernels, const std::vector<float >& biases, vector<map<int, vector<cv::Mat_<double> > > >& precomp_dfts)
 	{
 		outputs.clear();
 
 		// Useful precomputed data placeholders for quick correlation (convolution)
-		std::vector<cv::Mat_<double> > input_image_dft;
+		vector<cv::Mat_<double> > input_image_dft;
 
 		for (size_t k = 0; k < kernels.size(); ++k)
 		{
@@ -442,8 +441,7 @@ namespace LandmarkDetector
 		}
 	}
 
-	void im2col_multimap(const std::vector<cv::Mat_<float> >& inputs, const unsigned int width, const unsigned int height, 
-		cv::Mat_<float>& output)
+	void im2col_multimap(const vector<cv::Mat_<float> >& inputs, const unsigned int width, const unsigned int height, cv::Mat_<float>& output)
 	{
 	
 		const unsigned int m = inputs[0].rows;

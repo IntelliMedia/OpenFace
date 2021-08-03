@@ -31,13 +31,19 @@
 //       IEEE International Conference on Automatic Face and Gesture Recognition, 2015 
 //
 ///////////////////////////////////////////////////////////////////////////////
-#include <stdafx_fa.h>
 
 #include "FaceAnalyserParameters.h"
+
+// System includes
+#include <sstream>
+#include <iostream>
+#include <cstdlib>
 
 #ifndef CONFIG_DIR
 #define CONFIG_DIR "~"
 #endif
+
+using namespace std;
 
 using namespace FaceAnalysis;
 
@@ -47,17 +53,17 @@ FaceAnalyserParameters::FaceAnalyserParameters():root()
 	init();
 }
 
-FaceAnalyserParameters::FaceAnalyserParameters(std::string root_dir)
+FaceAnalyserParameters::FaceAnalyserParameters(string root_dir)
 {
 	this->root = root_dir;
 	init();
 	
 }
-FaceAnalyserParameters::FaceAnalyserParameters(std::vector<std::string> &arguments):root()
+FaceAnalyserParameters::FaceAnalyserParameters(vector<string> &arguments):root()
 {
 
 	// First element is reserved for the executable location (useful for finding relative model locs)
-	this->root = fs::path(arguments[0]).parent_path();
+	this->root = boost::filesystem::path(arguments[0]).parent_path();
 
 	// initialise the default values
 	init();
@@ -127,17 +133,17 @@ FaceAnalyserParameters::FaceAnalyserParameters(std::vector<std::string> &argumen
 
 	// Make sure model_location is valid
 	// First check working directory, then the executable's directory, then the config path set by the build process.
-	fs::path config_path = fs::path(CONFIG_DIR);
-	fs::path model_path = fs::path(this->model_location);
-	if (fs::exists(model_path))
+	boost::filesystem::path config_path = boost::filesystem::path(CONFIG_DIR);
+	boost::filesystem::path model_path = boost::filesystem::path(this->model_location);
+	if (boost::filesystem::exists(model_path))
 	{
 		this->model_location = model_path.string();
 	}
-	else if (fs::exists(root/model_path))
+	else if (boost::filesystem::exists(root/model_path))
 	{
 		this->model_location = (root/model_path).string();
 	}
-	else if (fs::exists(config_path/model_path))
+	else if (boost::filesystem::exists(config_path/model_path))
 	{
 		this->model_location = (config_path/model_path).string();
 	}
@@ -160,17 +166,17 @@ void FaceAnalyserParameters::init()
 
 	// Make sure model_location is valid
 	// First check working directory, then the executable's directory, then the config path set by the build process.
-	fs::path config_path = fs::path(CONFIG_DIR);
-	fs::path model_path = fs::path(this->model_location);
-	if (fs::exists(model_path))
+	boost::filesystem::path config_path = boost::filesystem::path(CONFIG_DIR);
+	boost::filesystem::path model_path = boost::filesystem::path(this->model_location);
+	if (boost::filesystem::exists(model_path))
 	{
 		this->model_location = model_path.string();
 	}
-	else if (fs::exists(root / model_path))
+	else if (boost::filesystem::exists(root / model_path))
 	{
 		this->model_location = (root / model_path).string();
 	}
-	else if (fs::exists(config_path / model_path))
+	else if (boost::filesystem::exists(config_path / model_path))
 	{
 		this->model_location = (config_path / model_path).string();
 	}
@@ -179,7 +185,7 @@ void FaceAnalyserParameters::init()
 		std::cout << "Could not find the face analysis module to load" << std::endl;
 	}
 
-	orientation_bins = std::vector<cv::Vec3d>();
+	orientation_bins = vector<cv::Vec3d>();
 
 }
 
@@ -210,17 +216,17 @@ void FaceAnalyserParameters::OptimizeForVideos()
 
 	// Make sure model_location is valid
 	// First check working directory, then the executable's directory, then the config path set by the build process.
-	fs::path config_path = fs::path(CONFIG_DIR);
-	fs::path model_path = fs::path(this->model_location);
-	if (fs::exists(model_path))
+	boost::filesystem::path config_path = boost::filesystem::path(CONFIG_DIR);
+	boost::filesystem::path model_path = boost::filesystem::path(this->model_location);
+	if (boost::filesystem::exists(model_path))
 	{
 		this->model_location = model_path.string();
 	}
-	else if (fs::exists(root / model_path))
+	else if (boost::filesystem::exists(root / model_path))
 	{
 		this->model_location = (root / model_path).string();
 	}
-	else if (fs::exists(config_path / model_path))
+	else if (boost::filesystem::exists(config_path / model_path))
 	{
 		this->model_location = (config_path / model_path).string();
 	}
@@ -240,17 +246,17 @@ void FaceAnalyserParameters::OptimizeForImages()
 
 	// Make sure model_location is valid
 	// First check working directory, then the executable's directory, then the config path set by the build process.
-	fs::path config_path = fs::path(CONFIG_DIR);
-	fs::path model_path = fs::path(this->model_location);
-	if (fs::exists(model_path))
+	boost::filesystem::path config_path = boost::filesystem::path(CONFIG_DIR);
+	boost::filesystem::path model_path = boost::filesystem::path(this->model_location);
+	if (boost::filesystem::exists(model_path))
 	{
 		this->model_location = model_path.string();
 	}
-	else if (fs::exists(root / model_path))
+	else if (boost::filesystem::exists(root / model_path))
 	{
 		this->model_location = (root / model_path).string();
 	}
-	else if (fs::exists(config_path / model_path))
+	else if (boost::filesystem::exists(config_path / model_path))
 	{
 		this->model_location = (config_path / model_path).string();
 	}

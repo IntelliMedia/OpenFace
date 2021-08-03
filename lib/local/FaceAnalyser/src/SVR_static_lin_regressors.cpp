@@ -31,7 +31,6 @@
 //       IEEE International Conference on Automatic Face and Gesture Recognition, 2015 
 //
 ///////////////////////////////////////////////////////////////////////////////
-#include <stdafx_fa.h>
 
 #include "Face_utils.h"
 

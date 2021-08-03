@@ -30,9 +30,10 @@
 //       IEEE International Conference on Automatic Face and Gesture Recognition, 2015 
 //
 ///////////////////////////////////////////////////////////////////////////////
-#include "stdafx_ut.h"
 
 #include "RecorderOpenFaceParameters.h"
+
+using namespace std;
 
 using namespace Utilities;
 
@@ -175,9 +176,6 @@ RecorderOpenFaceParameters::RecorderOpenFaceParameters(bool sequence, bool is_fr
 	}
 	// Default output code
 	this->output_codec = "DIVX";
-
-	this->image_format_aligned = "bmp";
-	this->image_format_visualization = "jpg";
 
 	this->output_2D_landmarks = output_2D_landmarks;
 	this->output_3D_landmarks = output_3D_landmarks;
