@@ -349,8 +349,8 @@ namespace UtilitiesOF {
 					cv::VideoCapture cap1(i);
 
 					auto resolution = resolutions[(int)(resolutions->Count / 2)];
-					cap1.set(cv::CAP_PROP_FRAME_WIDTH, resolution->Item1);
-					cap1.set(cv::CAP_PROP_FRAME_HEIGHT, resolution->Item2);
+					cap1.set(CV_CAP_PROP_FRAME_WIDTH, resolution->Item1);
+					cap1.set(CV_CAP_PROP_FRAME_HEIGHT, resolution->Item2);
 
 					// Read several frames, as the first one often is over-exposed
 					for (int k = 0; k < 2; ++k)
@@ -377,12 +377,12 @@ namespace UtilitiesOF {
 					{
 						auto resolution = gcnew System::Tuple<int, int>(common_resolutions[i].first, common_resolutions[i].second);
 
-						cap1.set(cv::CAP_PROP_FRAME_WIDTH, resolution->Item1);
-						cap1.set(cv::CAP_PROP_FRAME_HEIGHT, resolution->Item2);
+						cap1.set(CV_CAP_PROP_FRAME_WIDTH, resolution->Item1);
+						cap1.set(CV_CAP_PROP_FRAME_HEIGHT, resolution->Item2);
 
 						// Add only valid resolutions as API sometimes provides wrong ones
-						int set_width = cap1.get(cv::CAP_PROP_FRAME_WIDTH);
-						int set_height = cap1.get(cv::CAP_PROP_FRAME_HEIGHT);
+						int set_width = cap1.get(CV_CAP_PROP_FRAME_WIDTH);
+						int set_height = cap1.get(CV_CAP_PROP_FRAME_HEIGHT);
 
 						// Grab a thumbnail from mid resolution
 						if (i == (int)common_resolutions.size() / 2)

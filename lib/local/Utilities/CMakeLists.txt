@@ -5,7 +5,6 @@ SET(SOURCE
 	src/RecorderOpenFace.cpp
     src/RecorderOpenFaceParameters.cpp
 	src/SequenceCapture.cpp
-	src/stdafx_ut.cpp
 	src/VisualizationUtils.cpp
 	src/Visualizer.cpp
 )
@@ -17,10 +16,8 @@ SET(HEADERS
     include/RecorderOpenFace.h
 	include/RecorderOpenFaceParameters.h
 	include/SequenceCapture.h
-	include/stdafx_ut.h
 	include/VisualizationUtils.h
-	include/Visualizer.h
-	include/ConcurrentQueue.h
+	include/Visualizer.h	
 )
 
 add_library( Utilities ${SOURCE} ${HEADERS})
@@ -31,17 +28,12 @@ target_include_directories(Utilities PUBLIC
     $<INSTALL_INTERFACE:$<INSTALL_PREFIX>/include/OpenFace>)
 
 target_include_directories(Utilities PRIVATE ${UTILITIES_SOURCE_DIR}/include)
+target_include_directories(Utilities PUBLIC ${Boost_INCLUDE_DIRS})
+target_include_directories(Utilities PUBLIC ${Boost_INCLUDE_DIRS}/boost)
 target_include_directories(Utilities PUBLIC ${OpenCV_INCLUDE_DIRS})
 
-target_link_libraries(Utilities PUBLIC ${OpenCV_LIBS})
+target_link_libraries(Utilities PUBLIC ${OpenCV_LIBS} ${Boost_LIBRARIES})
 target_link_libraries(Utilities PUBLIC dlib::dlib)
-
-if(${Boost_FOUND})
-	target_include_directories(Utilities PUBLIC ${Boost_INCLUDE_DIRS})
-	target_link_libraries(Utilities PUBLIC ${Boost_LIBRARIES})
-else()
-	target_link_libraries(Utilities PUBLIC stdc++fs)
-endif()
 
 install (TARGETS Utilities EXPORT OpenFaceTargets LIBRARY DESTINATION lib ARCHIVE DESTINATION lib)
 install (FILES ${HEADERS} DESTINATION include/OpenFace)

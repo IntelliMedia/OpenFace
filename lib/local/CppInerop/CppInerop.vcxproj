@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
@@ -22,7 +22,7 @@
     <ProjectGuid>{78196985-EE54-411F-822B-5A23EDF80642}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>CppInerop</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -63,25 +63,29 @@
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="..\..\3rdParty\dlib\dlib.props" />
-    <Import Project="..\..\3rdParty\OpenCV\openCV.props" />
+    <Import Project="..\..\3rdParty\boost\boost_d.props" />
+    <Import Project="..\..\3rdParty\OpenCV3.4\openCV3.4.props" />
     <Import Project="..\..\3rdParty\OpenBLAS\OpenBLAS_x86.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="..\..\3rdParty\dlib\dlib.props" />
-    <Import Project="..\..\3rdParty\OpenCV\openCV.props" />
+    <Import Project="..\..\3rdParty\boost\boost.props" />
+    <Import Project="..\..\3rdParty\OpenCV3.4\openCV3.4.props" />
     <Import Project="..\..\3rdParty\OpenBLAS\OpenBLAS_x86.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="..\..\3rdParty\dlib\dlib.props" />
-    <Import Project="..\..\3rdParty\OpenCV\openCV.props" />
+    <Import Project="..\..\3rdParty\boost\boost_d.props" />
+    <Import Project="..\..\3rdParty\OpenCV3.4\openCV3.4.props" />
     <Import Project="..\..\3rdParty\OpenBLAS\OpenBLAS_64.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="..\..\3rdParty\dlib\dlib.props" />
-    <Import Project="..\..\3rdParty\OpenCV\openCV.props" />
+    <Import Project="..\..\3rdParty\boost\boost.props" />
+    <Import Project="..\..\3rdParty\OpenCV3.4\openCV3.4.props" />
     <Import Project="..\..\3rdParty\OpenBLAS\OpenBLAS_64.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
@@ -106,7 +110,6 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;CPPINEROP_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>./;$(SolutionDir)lib\local\LandmarkDetector\include;$(SolutionDir)lib\local\FaceAnalyser\include;$(SolutionDir)lib\local\GazeAnalyser\include;$(SolutionDir)lib\local\Utilities\include;$(SolutionDir)lib\3rdParty\CameraEnumerator;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
-      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -123,7 +126,6 @@
       <AdditionalIncludeDirectories>./;$(SolutionDir)lib\local\LandmarkDetector\include;$(SolutionDir)lib\local\FaceAnalyser\include;$(SolutionDir)lib\local\GazeAnalyser\include;$(SolutionDir)lib\local\Utilities\include;$(SolutionDir)lib\3rdParty\CameraEnumerator;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <EnableEnhancedInstructionSet>
       </EnableEnhancedInstructionSet>
-      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -143,7 +145,6 @@
       <AdditionalIncludeDirectories>./;$(SolutionDir)lib\local\LandmarkDetector\include;$(SolutionDir)lib\local\FaceAnalyser\include;$(SolutionDir)lib\local\GazeAnalyser\include;$(SolutionDir)lib\local\Utilities\include;$(SolutionDir)lib\3rdParty\CameraEnumerator;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
-      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -166,7 +167,6 @@
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <EnableEnhancedInstructionSet>
       </EnableEnhancedInstructionSet>
-      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -209,7 +209,6 @@
   </ItemGroup>
   <ItemGroup>
     <Reference Include="PresentationCore" />
-    <Reference Include="System.Drawing" />
     <Reference Include="WindowsBase">
       <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\WindowsBase.dll</HintPath>
     </Reference>

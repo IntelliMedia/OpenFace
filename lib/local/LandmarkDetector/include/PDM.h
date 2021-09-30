@@ -64,7 +64,7 @@ class PDM{
 		// A copy constructor
 		PDM(const PDM& other);
 			
-		bool Read(std::string location);
+		bool Read(string location);
 
 		// Number of vertices
 		inline int NumberOfPoints() const {return mean_shape.rows/3;}

@@ -45,6 +45,8 @@
 #include <LandmarkDetectorUtils.h>
 #include <LandmarkDetectorModel.h>
 
+using namespace std;
+
 namespace LandmarkDetector
 {
 

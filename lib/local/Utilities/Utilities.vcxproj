@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
@@ -22,7 +22,7 @@
     <ProjectGuid>{8E741EA2-9386-4CF2-815E-6F9B08991EAC}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>Utilities</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
     <ProjectName>Utilities</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -59,26 +59,30 @@
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\..\3rdParty\boost\boost_d.props" />
     <Import Project="..\..\3rdParty\dlib\dlib.props" />
-    <Import Project="..\..\3rdParty\OpenCV\openCV.props" />
+    <Import Project="..\..\3rdParty\OpenCV3.4\openCV3.4.props" />
     <Import Project="..\..\3rdParty\OpenBLAS\OpenBLAS_x86.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\..\3rdParty\boost\boost.props" />
     <Import Project="..\..\3rdParty\dlib\dlib.props" />
-    <Import Project="..\..\3rdParty\OpenCV\openCV.props" />
+    <Import Project="..\..\3rdParty\OpenCV3.4\openCV3.4.props" />
     <Import Project="..\..\3rdParty\OpenBLAS\OpenBLAS_x86.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\..\3rdParty\boost\boost_d.props" />
     <Import Project="..\..\3rdParty\dlib\dlib.props" />
-    <Import Project="..\..\3rdParty\OpenCV\openCV.props" />
+    <Import Project="..\..\3rdParty\OpenCV3.4\openCV3.4.props" />
     <Import Project="..\..\3rdParty\OpenBLAS\OpenBLAS_64.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\..\3rdParty\boost\boost.props" />
     <Import Project="..\..\3rdParty\dlib\dlib.props" />
-    <Import Project="..\..\3rdParty\OpenCV\openCV.props" />
+    <Import Project="..\..\3rdParty\OpenCV3.4\openCV3.4.props" />
     <Import Project="..\..\3rdParty\OpenBLAS\OpenBLAS_64.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
@@ -92,7 +96,6 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>./include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
-      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -108,7 +111,6 @@
       <AdditionalIncludeDirectories>./include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <EnableEnhancedInstructionSet>
       </EnableEnhancedInstructionSet>
-      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -117,7 +119,8 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>
       </FunctionLevelLinking>
@@ -127,8 +130,6 @@
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
-      <LanguageStandard>stdcpp17</LanguageStandard>
-      <PrecompiledHeaderFile>stdafx_ut.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -139,7 +140,8 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>
       </FunctionLevelLinking>
@@ -150,8 +152,6 @@
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <EnableEnhancedInstructionSet>
       </EnableEnhancedInstructionSet>
-      <LanguageStandard>stdcpp17</LanguageStandard>
-      <PrecompiledHeaderFile>stdafx_ut.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -166,10 +166,6 @@
     <ClCompile Include="src\RecorderOpenFace.cpp" />
     <ClCompile Include="src\RecorderOpenFaceParameters.cpp" />
     <ClCompile Include="src\SequenceCapture.cpp" />
-    <ClCompile Include="src\stdafx_ut.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
-    </ClCompile>
     <ClCompile Include="src\VisualizationUtils.cpp" />
     <ClCompile Include="src\Visualizer.cpp" />
   </ItemGroup>
@@ -183,7 +179,6 @@
     <ClInclude Include="include\RecorderOpenFaceParameters.h" />
     <ClInclude Include="include\RotationHelpers.h" />
     <ClInclude Include="include\SequenceCapture.h" />
-    <ClInclude Include="include\stdafx_ut.h" />
     <ClInclude Include="include\VisualizationUtils.h" />
     <ClInclude Include="include\Visualizer.h" />
   </ItemGroup>

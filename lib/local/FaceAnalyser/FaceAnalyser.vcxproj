@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
@@ -21,7 +21,7 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{0E7FC556-0E80-45EA-A876-DDE4C2FEDCD7}</ProjectGuid>
     <RootNamespace>FaceAnalyser</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -56,25 +56,29 @@
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="..\..\3rdParty\dlib\dlib.props" />
-    <Import Project="..\..\3rdParty\OpenCV\openCV.props" />
+    <Import Project="..\..\3rdParty\boost\boost_d.props" />
+    <Import Project="..\..\3rdParty\OpenCV3.4\openCV3.4.props" />
     <Import Project="..\..\3rdParty\OpenBLAS\OpenBLAS_x86.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="..\..\3rdParty\dlib\dlib.props" />
-    <Import Project="..\..\3rdParty\OpenCV\openCV.props" />
+    <Import Project="..\..\3rdParty\boost\boost_d.props" />
+    <Import Project="..\..\3rdParty\OpenCV3.4\openCV3.4.props" />
     <Import Project="..\..\3rdParty\OpenBLAS\OpenBLAS_64.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="..\..\3rdParty\dlib\dlib.props" />
-    <Import Project="..\..\3rdParty\OpenCV\openCV.props" />
+    <Import Project="..\..\3rdParty\boost\boost.props" />
+    <Import Project="..\..\3rdParty\OpenCV3.4\openCV3.4.props" />
     <Import Project="..\..\3rdParty\OpenBLAS\OpenBLAS_x86.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="..\..\3rdParty\dlib\dlib.props" />
-    <Import Project="..\..\3rdParty\OpenCV\openCV.props" />
+    <Import Project="..\..\3rdParty\boost\boost.props" />
+    <Import Project="..\..\3rdParty\OpenCV3.4\openCV3.4.props" />
     <Import Project="..\..\3rdParty\OpenBLAS\OpenBLAS_64.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
@@ -93,7 +97,6 @@
       <AdditionalIncludeDirectories>./include;$(SolutionDir)lib/local/Utilities/include;$(SolutionDir)lib/local/LandmarkDetector/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -115,7 +118,6 @@
       </EnableEnhancedInstructionSet>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <PreprocessorDefinitions>WIN64;_DEBUG;_LIB;EIGEN_MPL2_ONLY;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -139,9 +141,6 @@
       <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
-      <LanguageStandard>stdcpp17</LanguageStandard>
-      <PrecompiledHeader>Use</PrecompiledHeader>
-      <PrecompiledHeaderFile>stdafx_fa.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -170,9 +169,6 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <PreprocessorDefinitions>WIN64;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
-      <LanguageStandard>stdcpp17</LanguageStandard>
-      <PrecompiledHeader>Use</PrecompiledHeader>
-      <PrecompiledHeaderFile>stdafx_fa.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -197,10 +193,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\FaceAnalyserParameters.cpp" />
-    <ClCompile Include="src\stdafx_fa.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
-    </ClCompile>
     <ClCompile Include="src\SVM_dynamic_lin.cpp" />
     <ClCompile Include="src\SVM_static_lin.cpp" />
     <ClCompile Include="src\SVR_dynamic_lin_regressors.cpp" />
@@ -212,7 +204,6 @@
     </ClInclude>
     <ClCompile Include="src\FaceAnalyser.cpp" />
     <ClCompile Include="src\Face_utils.cpp" />
-    <ClInclude Include="include\stdafx_fa.h" />
     <ClInclude Include="include\SVM_dynamic_lin.h" />
     <ClInclude Include="include\SVM_static_lin.h" />
     <ClInclude Include="include\SVR_dynamic_lin_regressors.h" />

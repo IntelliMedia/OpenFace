@@ -1,5 +1,3 @@
-.git
-docker-compose.yml
 build
 matlab_runners
 matlab_version

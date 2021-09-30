@@ -44,6 +44,8 @@
 // Local includes
 #include "PAW.h"
 
+using namespace std;
+
 namespace LandmarkDetector
 {
 //===========================================================================
@@ -58,31 +60,31 @@ class DetectionValidator
 public:    
 	
 	// The orientations of each of the landmark detection validator
-	std::vector<cv::Vec3d> orientations;
+	vector<cv::Vec3d> orientations;
 
 	// Piecewise affine warps to the reference shape (per orientation)
-	std::vector<PAW>     paws;
+	vector<PAW>     paws;
 
 	//==========================================
 	// Convolutional Neural Network
 
 	// CNN layers for each view
 	// view -> layer
-	std::vector<std::vector<std::vector<std::vector<cv::Mat_<float> > > > > cnn_convolutional_layers;
-	std::vector<std::vector<cv::Mat_<float> > > cnn_convolutional_layers_weights;
-	std::vector<std::vector<cv::Mat_<float> > > cnn_convolutional_layers_im2col_precomp;
+	vector<vector<vector<vector<cv::Mat_<float> > > > > cnn_convolutional_layers;
+	vector<vector<cv::Mat_<float> > > cnn_convolutional_layers_weights;
+	vector<vector<cv::Mat_<float> > > cnn_convolutional_layers_im2col_precomp;
 
-	std::vector< std::vector<int> > cnn_subsampling_layers;
-	std::vector< std::vector<cv::Mat_<float> > > cnn_fully_connected_layers_weights;
-	std::vector< std::vector<cv::Mat_<float>  > > cnn_fully_connected_layers_biases;
+	vector< vector<int> > cnn_subsampling_layers;
+	vector< vector<cv::Mat_<float> > > cnn_fully_connected_layers_weights;
+	vector< vector<cv::Mat_<float>  > > cnn_fully_connected_layers_biases;
 	// NEW CNN: 0 - convolutional, 1 - max pooling (2x2 stride 2), 2 - fully connected, 3 - relu, 4 - sigmoid
-	std::vector<std::vector<int> > cnn_layer_types;
+	vector<vector<int> > cnn_layer_types;
 	
 	//==========================================
 
 	// Normalisation for face validation
-	std::vector<cv::Mat_<float> > mean_images;
-	std::vector<cv::Mat_<float> > standard_deviations;
+	vector<cv::Mat_<float> > mean_images;
+	vector<cv::Mat_<float> > standard_deviations;
 
 	// Default constructor
 	DetectionValidator(){;}
@@ -94,7 +96,7 @@ public:
 	float Check(const cv::Vec3d& orientation, const cv::Mat_<uchar>& intensity_img, cv::Mat_<float>& detected_landmarks);
 
 	// Reading in the model
-	void Read(std::string location);
+	void Read(string location);
 			
 	// Getting the closest view center based on orientation
 	int GetViewId(const cv::Vec3d& orientation) const;

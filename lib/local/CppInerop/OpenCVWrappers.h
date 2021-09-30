@@ -42,8 +42,11 @@
 
 #pragma unmanaged
 
-#include <opencv2/core/core.hpp>
-#include <opencv2/highgui/highgui.hpp>
+#include <cv.h>
+#include <highgui.h>
+
+#include <opencv2/videoio/videoio.hpp>  // Video write
+#include <opencv2/videoio/videoio_c.h>  // Video write
 
 #pragma managed
 
@@ -98,41 +101,6 @@ namespace OpenCVWrappers {
 		RawImage(const cv::Mat& m)
 		{
 			mat = new cv::Mat(m.clone());
-		}
-
-		// Constructing a raw image from bitmap
-		RawImage(System::Drawing::Bitmap^ bitmap)
-		{
-
-			auto fmt = bitmap->PixelFormat;
-			if (fmt == System::Drawing::Imaging::PixelFormat::Format24bppRgb)
-			{
-				mat = new cv::Mat(cv::Size(bitmap->Width, bitmap->Height), CV_8UC3);			
-			}
-			else if (fmt == System::Drawing::Imaging::PixelFormat::Format32bppArgb)
-			{
-				mat = new cv::Mat(cv::Size(bitmap->Width, bitmap->Height), CV_8UC4);
-			}
-			else
-			{
-				throw gcnew System::Exception("Unsupported image type");
-			}
-
-			auto rect = System::Drawing::Rectangle(0, 0, bitmap->Width, bitmap->Height);
-			auto bitmap_data = bitmap->LockBits(rect, System::Drawing::Imaging::ImageLockMode::ReadOnly, bitmap->PixelFormat);
-			System::IntPtr source_data = bitmap_data->Scan0;
-
-			int bytes = bitmap_data->Stride * bitmap_data->Height;
-			memcpy(mat->data, source_data.ToPointer(), bytes);
-
-			//Unlock the bits.
-			bitmap->UnlockBits(bitmap_data);
-
-			if (fmt == System::Drawing::Imaging::PixelFormat::Format32bppArgb)
-			{
-				cv::cvtColor(*mat, *mat, cv::COLOR_RGBA2RGB);
-			}
-
 		}
 
 		void Mirror()
@@ -244,7 +212,7 @@ namespace OpenCVWrappers {
 			msclr::interop::marshal_context context;
 			std::string location_std_string = context.marshal_as<std::string>(location);
 
-			vc = new cv::VideoWriter(location_std_string, cv::VideoWriter::fourcc('D', 'I', 'V', 'X'), fps, cv::Size(width, height), colour);
+			vc = new cv::VideoWriter(location_std_string, CV_FOURCC('D', 'I', 'V', 'X'), fps, cv::Size(width, height), colour);
 
 		}
 

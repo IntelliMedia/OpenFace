@@ -39,9 +39,6 @@
     <ClCompile Include="src\ImageCapture.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\stdafx_ut.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\RecorderCSV.h">
@@ -75,9 +72,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\ConcurrentQueue.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\stdafx_ut.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

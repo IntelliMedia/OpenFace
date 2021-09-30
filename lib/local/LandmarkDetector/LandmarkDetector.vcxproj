@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
@@ -23,7 +23,7 @@
     <RootNamespace>FaceTracker</RootNamespace>
     <Keyword>Win32Proj</Keyword>
     <ProjectName>LandmarkDetector</ProjectName>
-    <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
@@ -53,26 +53,30 @@
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\..\3rdParty\boost\boost.props" />
     <Import Project="..\..\3rdParty\dlib\dlib.props" />
-    <Import Project="..\..\3rdParty\OpenCV\openCV.props" />
+    <Import Project="..\..\3rdParty\OpenCV3.4\openCV3.4.props" />
     <Import Project="..\..\3rdParty\OpenBLAS\OpenBLAS_x86.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\..\3rdParty\boost\boost.props" />
     <Import Project="..\..\3rdParty\dlib\dlib.props" />
-    <Import Project="..\..\3rdParty\OpenCV\openCV.props" />
+    <Import Project="..\..\3rdParty\OpenCV3.4\openCV3.4.props" />
     <Import Project="..\..\3rdParty\OpenBLAS\OpenBLAS_64.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="..\..\3rdParty\dlib\dlib.props" />
-    <Import Project="..\..\3rdParty\OpenCV\openCV.props" />
+    <Import Project="..\..\3rdParty\boost\boost_d.props" />
+    <Import Project="..\..\3rdParty\OpenCV3.4\openCV3.4.props" />
     <Import Project="..\..\3rdParty\OpenBLAS\OpenBLAS_x86.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="..\..\3rdParty\dlib\dlib.props" />
-    <Import Project="..\..\3rdParty\OpenCV\openCV.props" />
+    <Import Project="..\..\3rdParty\boost\boost_d.props" />
+    <Import Project="..\..\3rdParty\OpenCV3.4\openCV3.4.props" />
     <Import Project="..\..\3rdParty\OpenBLAS\OpenBLAS_64.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
@@ -98,14 +102,13 @@
       <OpenMPSupport>false</OpenMPSupport>
       <AdditionalOptions>/Zm300 %(AdditionalOptions)</AdditionalOptions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Lib>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
     </Lib>
     <PostBuildEvent>
       <Command>xcopy /I /E /Y /D "$(SolutionDir)lib\local\LandmarkDetector\model" "$(OutDir)model"
-xcopy /I /E /Y /D "$(SolutionDir)lib\3rdParty\OpenCV\classifiers" "$(OutDir)classifiers"</Command>
+xcopy /I /E /Y /D "$(SolutionDir)lib\3rdParty\OpenCV3.4\classifiers" "$(OutDir)classifiers"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -123,14 +126,13 @@ xcopy /I /E /Y /D "$(SolutionDir)lib\3rdParty\OpenCV\classifiers" "$(OutDir)clas
       <OpenMPSupport>false</OpenMPSupport>
       <AdditionalOptions>/Zm300 %(AdditionalOptions)</AdditionalOptions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Lib>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
     </Lib>
     <PostBuildEvent>
       <Command>xcopy /I /E /Y /D "$(SolutionDir)lib\local\LandmarkDetector\model" "$(OutDir)model"
-xcopy /I /E /Y /D "$(SolutionDir)lib\3rdParty\OpenCV\classifiers" "$(OutDir)classifiers"</Command>
+xcopy /I /E /Y /D "$(SolutionDir)lib\3rdParty\OpenCV3.4\classifiers" "$(OutDir)classifiers"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -149,14 +151,13 @@ xcopy /I /E /Y /D "$(SolutionDir)lib\3rdParty\OpenCV\classifiers" "$(OutDir)clas
       <OpenMPSupport>false</OpenMPSupport>
       <AdditionalOptions>/Zm300 %(AdditionalOptions)</AdditionalOptions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Lib>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
     </Lib>
     <PostBuildEvent>
       <Command>xcopy /I /E /Y /D "$(SolutionDir)lib\local\LandmarkDetector\model" "$(OutDir)model"
-xcopy /I /E /Y /D "$(SolutionDir)lib\3rdParty\OpenCV\classifiers" "$(OutDir)classifiers"</Command>
+xcopy /I /E /Y /D "$(SolutionDir)lib\3rdParty\OpenCV3.4\classifiers" "$(OutDir)classifiers"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -176,14 +177,13 @@ xcopy /I /E /Y /D "$(SolutionDir)lib\3rdParty\OpenCV\classifiers" "$(OutDir)clas
       <OpenMPSupport>false</OpenMPSupport>
       <AdditionalOptions>/Zm300 %(AdditionalOptions)</AdditionalOptions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Lib>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
     </Lib>
     <PostBuildEvent>
       <Command>xcopy /I /E /Y /D "$(SolutionDir)lib\local\LandmarkDetector\model" "$(OutDir)model"
-xcopy /I /E /Y /D "$(SolutionDir)lib\3rdParty\OpenCV\classifiers" "$(OutDir)classifiers"</Command>
+xcopy /I /E /Y /D "$(SolutionDir)lib\3rdParty\OpenCV3.4\classifiers" "$(OutDir)classifiers"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
