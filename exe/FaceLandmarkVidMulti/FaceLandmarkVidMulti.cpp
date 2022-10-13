@@ -57,6 +57,8 @@ std::cout << "Warning: " << stream << std::endl
 std::cout << "Error: " << stream << std::endl
 
 // Global variables
+
+bool detection_success = false;
 static const int num_faces_max = 3;
 double gazeDirection0_array[3 * num_faces_max];
 double gazeDirection1_array[3 * num_faces_max];
@@ -125,6 +127,13 @@ extern "C"
 
 		strcpy(presenceString, au_presence_name_concat);
 		return 0;
+	}
+}
+
+extern "C"
+{
+	__declspec(dllexport) int __stdcall getdetection_success() {
+		return detection_success;
 	}
 }
 
@@ -425,7 +434,7 @@ extern "C"
 				// Go through every model and update the tracking
 				for (unsigned int model = 0; model < face_models.size(); ++model)
 				{
-					bool detection_success = false;
+					//detection_success = false;
 
 					// If the current model has failed more than 4 times in a row, remove it
 					if (face_models[model].failures_in_a_row > 4)
@@ -463,8 +472,8 @@ extern "C"
 					}
 					else
 					{
-					// The actual facial landmark detection / tracking
-					detection_success = LandmarkDetector::DetectLandmarksInVideo(rgb_image, face_models[model], det_parameters[model], grayscale_image);
+						// The actual facial landmark detection / tracking
+						detection_success = LandmarkDetector::DetectLandmarksInVideo(rgb_image, face_models[model], det_parameters[model], grayscale_image);
 					}
 				}
 

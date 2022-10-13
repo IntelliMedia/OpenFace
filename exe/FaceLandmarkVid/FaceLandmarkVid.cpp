@@ -77,7 +77,7 @@ using namespace std;
 
 // Global Vars :v 
 
-bool detection_success=FALSE;
+bool detection_success=false;
 cv::Vec6d pose_estimate;
 cv::Point3f gazeDirection0(0, 0, -1);
 cv::Point3f gazeDirection1(0, 0, -1);
